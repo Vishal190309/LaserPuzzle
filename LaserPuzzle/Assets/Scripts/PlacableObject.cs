@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Net.NetworkInformation;
 using UnityEngine;
 
 public class PlacableObject : MonoBehaviour
@@ -10,18 +11,6 @@ public class PlacableObject : MonoBehaviour
     private float redTransperentAlpha = 0.8f;
     [SerializeField]
     private float normalAplha = 1f;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     public void SetColorRed(bool bRed)
     {
         SpriteRenderer spriteRender = gameObject.GetComponentInChildren<SpriteRenderer>();
@@ -67,7 +56,7 @@ public class PlacableObject : MonoBehaviour
 
     public void Rotate(bool bLeft)
     {
-        gameObject.transform.Rotate(new Vector3(0, 0, bLeft ? 90 : 90));
+        gameObject.transform.Rotate(new Vector3(0, 0, bLeft ? 90 : -90));
        
     }
 }
