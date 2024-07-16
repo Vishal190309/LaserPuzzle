@@ -62,12 +62,15 @@ public class PlacementSystem : MonoBehaviour
         currentSelectedObject.transform.position = mouseIndicator.transform.position;  
         currentSelectedObject.SetTransperentMaterial(true);
         inputManager.OnClicked += PlaceObject;
+        inputManager.OnRotate += RotateObject;
     }
 
     private void StopPlacement()
     {
        if(currentSelectedObject != null)
         {
+            inputManager.OnClicked -= PlaceObject;
+            inputManager.OnRotate -= RotateObject;
             Destroy(currentSelectedObject.gameObject);
             currentSelectedObject = null;
             placeObjectPreview = false;
@@ -84,7 +87,8 @@ public class PlacementSystem : MonoBehaviour
         {
             if (CanPlaceObject(currentSelectedObject.gameObject.transform.position))
             {
-
+                inputManager.OnClicked -= PlaceObject;
+                inputManager.OnRotate -= RotateObject;
                 placeObjectsLocations.Add(currentSelectedObject);
                 currentSelectedObject.SetTransperentMaterial(false);
                 currentSelectedObject = null;
