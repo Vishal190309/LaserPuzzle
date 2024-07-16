@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
@@ -28,6 +29,7 @@ public class PlacementSystem : MonoBehaviour
 
     private void Start()
     {
+        inputManager.OnRightClick += RemoveObject;
         for(int i = -3; i<3; i++)
         {
             for (int j = -4; j<4; j++)
@@ -39,6 +41,9 @@ public class PlacementSystem : MonoBehaviour
         }
        
     }
+
+   
+
     private void Update()
     {
         if (mouseIndicator.transform.position != GetSelectedMapPosition())
@@ -101,6 +106,21 @@ public class PlacementSystem : MonoBehaviour
 
         }
 
+    }
+
+    private void RemoveObject()
+    {
+        Vector3 mouseCellPosition = GetSelectedMapPosition();
+        foreach (PlacableObject placeObject in placeObjectsLocations)
+        {
+            
+            if(mouseCellPosition == grid.GetCellCenterWorld(grid.WorldToCell(placeObject.gameObject.transform.position)))
+            {
+                Destroy(placeObject.gameObject);
+                placeObjectsLocations.Remove(placeObject);
+                break;
+            }
+        }
     }
 
     public bool CanPlaceObject(Vector3 location)
