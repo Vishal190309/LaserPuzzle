@@ -18,6 +18,10 @@ public class LaserController : MonoBehaviour
     private LayerMask layerMask;
     [SerializeField]
     private BoxCollider2D boxCollider;
+    [SerializeField]
+    private float laserSpeed = 5f;
+    [SerializeField]
+    private GameObject laser;
     private int currentVertexPosition = 0;
     private bool moveLaser = false;
     public void StartMovingLaser()
@@ -29,10 +33,13 @@ public class LaserController : MonoBehaviour
     {
         if(moveLaser)
         {
-            Vector2 newPosition = (Vector2)lineRenderer.GetPosition(currentVertexPosition+1) + (direction*0.003f);
+           
+            Vector2 newPosition = (Vector2)lineRenderer.GetPosition(currentVertexPosition+1) + (direction*laserSpeed * Time.deltaTime);
             lineRenderer.SetPosition(currentVertexPosition + 1, newPosition);
             boxCollider.gameObject.transform.position = newPosition;
-            
+            boxCollider.enabled = true;
+
+
         }
     }
 
@@ -46,15 +53,54 @@ public class LaserController : MonoBehaviour
         }
         else if (collision.collider.CompareTag("Mirror"))
         {
+            PlacableObject mirror = collision.gameObject.transform.parent.GetComponent<PlacableObject>();
+           
+            if (mirror)
+            {
+                mirror.enabled = false;
+                print(mirror.GetMirrorType().ToString());
+                switch (mirror.GetMirrorType())
+                {
+                    case MirrorType.Normal:
+                        direction = Vector2.Reflect(direction, collision.contacts[0].normal);
+                        print(direction);
+                        lineRenderer.positionCount += 1;
+                        currentVertexPosition += 1;
+                        lineRenderer.SetPosition(currentVertexPosition + 1, collision.contacts[0].point);
+                        moveLaser = true;
+                        break;
+                    case MirrorType.Splitter:
+                        Transform[] newLaserPosition = mirror.GetNewLaserLocation(collision.transform.position);
+                        for (int i = 0; i < newLaserPosition.Length; i++)
+                        {
+                            LaserController controller = Instantiate(laser, newLaserPosition[i].position, Quaternion.identity).GetComponent<LaserController>();
+                            controller.SetLaserStart(newLaserPosition[i].position );
+                            controller.SetLaserDirection(newLaserPosition[i].transform.right);
+                            controller.StartMovingLaser();
+                        }
+                        break;
+                    case MirrorType.Both:
+                        break;
+                }
+               
+                 
+                
+            }
             
-            direction = Vector2.Reflect(direction ,collision.contacts[0].normal);
-            print(direction);
-            lineRenderer.positionCount += 1;
-            currentVertexPosition += 1;
-            lineRenderer.SetPosition(currentVertexPosition+1, collision.contacts[0].point);
         }
-        moveLaser = true;
+       
 
+    }
+
+    public void SetLaserStart(Vector2 startPoint)
+    {
+        lineRenderer.SetPosition(0, startPoint);
+        lineRenderer.SetPosition(1, startPoint);
+    }
+
+    public void SetLaserDirection(Vector2 direction)
+    {
+        this.direction = direction;
     }
 
     void moveLineRenderer()
