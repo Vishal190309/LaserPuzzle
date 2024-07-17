@@ -1490,7 +1490,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: WallTrigger
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 5051165605575773895, guid: 4ce8733a41dd00541b44092f4052c91f, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
