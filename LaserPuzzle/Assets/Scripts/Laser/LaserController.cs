@@ -2,6 +2,7 @@ using JetBrains.Annotations;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -22,10 +23,13 @@ public class LaserController : MonoBehaviour
     private float laserSpeed = 5f;
     [SerializeField]
     private GameObject laser;
+    [SerializeField]
     private int currentVertexPosition = 0;
     private bool moveLaser = false;
     public void StartMovingLaser()
     {
+
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         moveLineRenderer();
     }
 
@@ -46,24 +50,19 @@ public class LaserController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         moveLaser = false;
-        print(collision.collider.tag);
-        if (collision.collider.CompareTag("Wall"))
-        {
-            SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
-        }
-        else if (collision.collider.CompareTag("Mirror"))
+        
+        if (collision.collider.CompareTag("Mirror"))
         {
             PlacableObject mirror = collision.gameObject.transform.parent.GetComponent<PlacableObject>();
            
             if (mirror)
             {
+                SoundManager.Instance.PlaySoundEffect(Sound.LASER_MIRROR);
                 mirror.enabled = false;
-                print(mirror.GetMirrorType().ToString());
                 switch (mirror.GetMirrorType())
                 {
                     case MirrorType.Normal:
                         direction = Vector2.Reflect(direction, collision.contacts[0].normal);
-                        print(direction);
                         lineRenderer.positionCount += 1;
                         currentVertexPosition += 1;
                         lineRenderer.SetPosition(currentVertexPosition + 1, collision.contacts[0].point);
@@ -87,13 +86,28 @@ public class LaserController : MonoBehaviour
                 
             }
             
-        }
-       
 
+        }
+        else if (collision.collider.CompareTag("Wall") || collision.collider.CompareTag("Allies"))
+        {
+            SoundManager.Instance.PlaySoundEffect(Sound.LASER_Wall);
+            StartCoroutine(LevelLost());
+        }
+
+
+    }
+
+
+    IEnumerator LevelLost()
+    {
+        yield return new WaitForSeconds(1.25f);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void SetLaserStart(Vector2 startPoint)
     {
+        currentVertexPosition = 0;
+        lineRenderer.positionCount = 2;
         lineRenderer.SetPosition(0, startPoint);
         lineRenderer.SetPosition(1, startPoint);
     }

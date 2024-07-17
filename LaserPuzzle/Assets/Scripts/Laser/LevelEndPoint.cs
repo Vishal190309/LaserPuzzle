@@ -12,6 +12,7 @@ public class LevelEndPoint : MonoBehaviour
     {
         if (collision.gameObject.GetComponent<LaserController>())
         {
+            gameObject.GetComponent<SpriteRenderer>().color = Color.green;
             levelController.increaseNoOfLaserEndPoints();
         }
     }
