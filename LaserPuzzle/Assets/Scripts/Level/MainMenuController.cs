@@ -14,18 +14,21 @@ public class MainMenuController : MonoBehaviour
 
     public void OnPlayButtonClicked()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         mainMenu.SetActive(false);
         levelSelectionMenu.SetActive(true);
     }
 
     public void OnHelpButtonClicked()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         mainMenu.SetActive(false);
         helpMenu.SetActive(true); 
     }
 
     public void OnBackClick()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         helpMenu.SetActive(false);
         levelSelectionMenu.SetActive(false);
         mainMenu.SetActive(true);
@@ -33,6 +36,7 @@ public class MainMenuController : MonoBehaviour
 
     public void OnQuitButtonCliked()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         Application.Quit();
     }
 }

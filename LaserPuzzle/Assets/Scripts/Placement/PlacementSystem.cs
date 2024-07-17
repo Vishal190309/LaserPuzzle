@@ -14,7 +14,10 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField]
     private GameObject circle;
 
-    private Vector3 lastPosition;
+    private Vector3 lastPosition = new Vector3(0.5f,0.5f,0.5f);
+
+    [SerializeField]
+    private List<Vector2> NoOfPlacableObjectsAvailable = new List<Vector2>();
 
     private bool placeObjectPreview;
     [SerializeField]
@@ -22,13 +25,19 @@ public class PlacementSystem : MonoBehaviour
     [SerializeField]
     private InputManager inputManager;
 
+    private int currentObjectId = -1;
     private PlacableObject currentSelectedObject;
 
     private List<Vector3> gridLocations = new List<Vector3>();
-    private List<PlacableObject> placeObjectsLocations = new List<PlacableObject>();
+    private List<Transform> placeObjectsLocations = new List<Transform>();
 
     private void Start()
     {
+        GameObject[] listOfAllies = GameObject.FindGameObjectsWithTag("Allies");
+        foreach (GameObject go in listOfAllies)
+        {
+            placeObjectsLocations.Add(go.transform);
+        }
         inputManager.OnRightClick += RemoveObject;
         for(int i = -3; i<3; i++)
         {
@@ -41,8 +50,6 @@ public class PlacementSystem : MonoBehaviour
         }
        
     }
-
-   
 
     private void Update()
     {
@@ -60,14 +67,21 @@ public class PlacementSystem : MonoBehaviour
 
     public void StartPlacingObject(int id)
     {
-        StopPlacement();
-        placeObjectPreview = true;
+        
+        if (NoOfPlacableObjectsAvailable[id].y > 0)
+        {
+            StopPlacement();
+            currentObjectId = id;
+            SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
+           
+            placeObjectPreview = true;
 
-        currentSelectedObject = Instantiate(data.placementObjects[data.placementObjects.FindIndex(data => data.ID == id)].placementObject);
-        currentSelectedObject.transform.position = mouseIndicator.transform.position;  
-        currentSelectedObject.SetTransperentMaterial(true);
-        inputManager.OnClicked += PlaceObject;
-        inputManager.OnRotate += RotateObject;
+            currentSelectedObject = Instantiate(data.placementObjects[data.placementObjects.FindIndex(data => data.ID == id)].placementObject);
+            currentSelectedObject.transform.position = mouseIndicator.transform.position;
+            currentSelectedObject.SetTransperentMaterial(true);
+            inputManager.OnClicked += PlaceObject;
+            inputManager.OnRotate += RotateObject;
+        }
     }
 
     private void StopPlacement()
@@ -78,6 +92,7 @@ public class PlacementSystem : MonoBehaviour
             inputManager.OnRotate -= RotateObject;
             Destroy(currentSelectedObject.gameObject);
             currentSelectedObject = null;
+            currentObjectId = -1;
             placeObjectPreview = false;
         }
     }
@@ -87,37 +102,46 @@ public class PlacementSystem : MonoBehaviour
         if (inputManager.IsMouseOverGameObject())
             return;
 
-        print("PlaceObjectCalled");
         if (currentSelectedObject != null)
         {
             if (CanPlaceObject(currentSelectedObject.gameObject.transform.position))
             {
+               
+                Vector2 currentObjectCount = NoOfPlacableObjectsAvailable[currentObjectId];
+                currentObjectCount.y -= 1;
+                NoOfPlacableObjectsAvailable[currentObjectId] = currentObjectCount;
+                LevelManager.Instance.OnObjectCountUpdated?.Invoke(currentObjectId);
+                SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
                 inputManager.OnClicked -= PlaceObject;
                 inputManager.OnRotate -= RotateObject;
-                placeObjectsLocations.Add(currentSelectedObject);
+                placeObjectsLocations.Add(currentSelectedObject.transform);
                 currentSelectedObject.SetTransperentMaterial(false);
                 currentSelectedObject = null;
+                currentObjectId = -1;
                 placeObjectPreview = false;
 
             }
-        }
-        else
-        {
-
         }
 
     }
 
     private void RemoveObject()
     {
+
         Vector3 mouseCellPosition = GetSelectedMapPosition();
-        foreach (PlacableObject placeObject in placeObjectsLocations)
+        foreach (Transform transform in placeObjectsLocations)
         {
             
-            if(mouseCellPosition == grid.GetCellCenterWorld(grid.WorldToCell(placeObject.gameObject.transform.position)))
+            if(mouseCellPosition == grid.GetCellCenterWorld(grid.WorldToCell(transform.position)))
             {
-                Destroy(placeObject.gameObject);
-                placeObjectsLocations.Remove(placeObject);
+                SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
+                PlacableObject placableObject = transform.gameObject.GetComponent<PlacableObject>();
+                Vector2 currentObjectCount = NoOfPlacableObjectsAvailable[placableObject.GetId()];
+                currentObjectCount.y += 1;
+                NoOfPlacableObjectsAvailable[placableObject.GetId()] = currentObjectCount;
+                LevelManager.Instance.OnObjectCountUpdated?.Invoke(placableObject.GetId());
+                Destroy(placableObject.gameObject);
+                placeObjectsLocations.Remove(placableObject.transform);
                 break;
             }
         }
@@ -129,7 +153,7 @@ public class PlacementSystem : MonoBehaviour
         {
             foreach (var placeObject in placeObjectsLocations)
             {
-                if(placeObject.transform.position == location)
+                if(placeObject.position == location)
                     return false;
             }
             return true;
@@ -141,6 +165,7 @@ public class PlacementSystem : MonoBehaviour
     {
         if(currentSelectedObject != null)
         {
+            SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
             currentSelectedObject.Rotate(bLeft);
         }
     }
@@ -148,12 +173,19 @@ public class PlacementSystem : MonoBehaviour
     {
         Vector3 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         mousePos.z = 0f;
+        
         Vector3 gridPosition = grid.GetCellCenterWorld(grid.WorldToCell(mousePos));
-
+       
         if (gridLocations.Contains(gridPosition))
         {
            lastPosition = gridPosition;
         }
+        
         return lastPosition;
+    }
+
+    public int GetAvailabelObjectCount(int id)
+    {
+        return (int)NoOfPlacableObjectsAvailable[id].y;
     }
 }

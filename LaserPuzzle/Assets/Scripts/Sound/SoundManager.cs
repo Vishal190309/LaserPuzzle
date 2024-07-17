@@ -74,5 +74,6 @@ public enum Sound
     BUTTON_CLICK,
     LASER_MIRROR,
     LASER_Wall,
+    LEVEL_WIN,
     BACKGROUND_MUSIC
 }

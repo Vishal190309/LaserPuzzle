@@ -7,6 +7,8 @@ using UnityEngine;
 public class PlacableObject : MonoBehaviour
 {
     [SerializeField]
+    private int Id;
+    [SerializeField]
     private float transperentAlpha = 0.9f;
     [SerializeField]
     private float redTransperentAlpha = 0.8f;
@@ -93,6 +95,12 @@ public class PlacableObject : MonoBehaviour
                 
         }
         return new Transform[0];
+    }
+
+
+    public int GetId()
+    {
+        return Id;
     }
 
      

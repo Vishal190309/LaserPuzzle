@@ -159,6 +159,7 @@ MonoBehaviour:
   boxCollider: {fileID: 2625168651157443165}
   laserSpeed: 3
   laser: {fileID: 3081483025474009524}
+  currentVertexPosition: 0
 --- !u!50 &109978146797764086
 Rigidbody2D:
   serializedVersion: 4
@@ -212,7 +213,7 @@ Transform:
   m_GameObject: {fileID: 3891362746290040842}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -4.68, y: 0.47, z: 0}
+  m_LocalPosition: {x: -59.31, y: 0.47, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

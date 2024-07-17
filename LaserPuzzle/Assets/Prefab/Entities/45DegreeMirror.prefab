@@ -76,10 +76,13 @@ PolygonCollider2D:
   m_AutoTiling: 0
   m_Points:
     m_Paths:
-    - - {x: -0.27188712, y: -0.50042474}
+    - - {x: -0.10651258, y: 0.30344316}
+      - {x: -0.11310282, y: 0.004522497}
+      - {x: -0.14908075, y: -0.30867863}
+      - {x: -0.32693726, y: -0.51877487}
       - {x: 0.21922487, y: -0.04461704}
       - {x: 0.2150234, y: 0.061473116}
-      - {x: -0.27883133, y: 0.5153546}
+      - {x: -0.31782514, y: 0.5359984}
   m_UseDelaunayMesh: 0
 --- !u!1 &7284665437876497860
 GameObject:
@@ -126,9 +129,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f12eda4c5b7ac7c44b2d0dbbc31c33b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  Id: 0
   transperentAlpha: 0.2
   redTransperentAlpha: 0.9
   normalAplha: 1
+  mirrorType: 0
 --- !u!1 &8188912581634463075
 GameObject:
   m_ObjectHideFlags: 0
@@ -263,8 +268,4 @@ PolygonCollider2D:
       - {x: -0.31804693, y: 0.52498263}
       - {x: -0.31804693, y: -0.51868933}
       - {x: -0.2751563, y: -0.5329862}
-      - {x: -0.13218753, y: -0.5329862}
-      - {x: 0.3253125, y: -0.08978306}
-      - {x: 0.3253125, y: 0.16756071}
-      - {x: -0.1464844, y: 0.56787324}
   m_UseDelaunayMesh: 0

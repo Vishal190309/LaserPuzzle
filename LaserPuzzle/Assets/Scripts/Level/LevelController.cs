@@ -15,6 +15,7 @@ public class LevelController : MonoBehaviour
     private int TotalOfLaserEndPoints;
     private int currentLaserEndPoints;
 
+
     private void Start()
     {
         inputManager.OnPause += OnPause;
@@ -22,13 +23,29 @@ public class LevelController : MonoBehaviour
     public void increaseNoOfLaserEndPoints()
     {
         currentLaserEndPoints += 1;
-        if(currentLaserEndPoints >= TotalOfLaserEndPoints)
+        if (currentLaserEndPoints >= TotalOfLaserEndPoints)
         {
-           OnLevelComplete();
+            SoundManager.Instance.PlaySoundEffect(Sound.LEVEL_WIN);
+            StartCoroutine(OpenLevelCompleteUI());
         }
+        else
+        {
+            SoundManager.Instance.PlaySoundEffect(Sound.LASER_MIRROR);
+        }
+    }
+
+    
+
+ 
+
+    IEnumerator OpenLevelCompleteUI()
+    {
+        yield return new WaitForSeconds (1.5f);
+        OnLevelComplete ();
     }
     public void NextLevel()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         int index = SceneManager.GetActiveScene().buildIndex;
         if (index < SceneManager.sceneCountInBuildSettings-1)
         {
@@ -46,22 +63,27 @@ public class LevelController : MonoBehaviour
     }
     public void Resume()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         pauseUI.SetActive(false);
         Time.timeScale = 1.0f;
     }
     public void Restart()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         Time.timeScale = 1.0f;
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }
 
     public void MainMenu()
     {
+        SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
         Time.timeScale = 1.0f;
         SceneManager.LoadScene(0);
     }
     public void OnLevelComplete()
     {
+        
+        LevelManager.Instance.SetCurrentLevelComplete();
         levelCompleteUI.SetActive(true);
     }
 
