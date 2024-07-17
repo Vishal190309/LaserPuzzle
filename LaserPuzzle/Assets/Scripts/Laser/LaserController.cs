@@ -50,48 +50,51 @@ public class LaserController : MonoBehaviour
     private void OnCollisionEnter2D(Collision2D collision)
     {
         moveLaser = false;
-        
-        if (collision.collider.CompareTag("Mirror"))
+
+        if (collision.gameObject.transform.parent)
         {
             PlacableObject mirror = collision.gameObject.transform.parent.GetComponent<PlacableObject>();
-           
+
             if (mirror)
             {
-                SoundManager.Instance.PlaySoundEffect(Sound.LASER_MIRROR);
-                mirror.enabled = false;
-                switch (mirror.GetMirrorType())
-                {
-                    case MirrorType.Normal:
-                        direction = Vector2.Reflect(direction, collision.contacts[0].normal);
-                        lineRenderer.positionCount += 1;
-                        currentVertexPosition += 1;
-                        lineRenderer.SetPosition(currentVertexPosition + 1, collision.contacts[0].point);
-                        moveLaser = true;
-                        break;
-                    case MirrorType.Splitter:
-                        Transform[] newLaserPosition = mirror.GetNewLaserLocation(collision.transform.position);
-                        for (int i = 0; i < newLaserPosition.Length; i++)
-                        {
-                            LaserController controller = Instantiate(laser, newLaserPosition[i].position, Quaternion.identity).GetComponent<LaserController>();
-                            controller.SetLaserStart(newLaserPosition[i].position );
-                            controller.SetLaserDirection(newLaserPosition[i].transform.right);
-                            controller.StartMovingLaser();
-                        }
-                        break;
-                    case MirrorType.Both:
-                        break;
-                }
-               
-                 
-                
-            }
-            
 
-        }
-        else if (collision.collider.CompareTag("Wall") || collision.collider.CompareTag("Allies"))
-        {
-            SoundManager.Instance.PlaySoundEffect(Sound.LASER_Wall);
-            StartCoroutine(LevelLost());
+                {
+                    SoundManager.Instance.PlaySoundEffect(Sound.LASER_MIRROR);
+                    mirror.enabled = false;
+                    switch (mirror.GetMirrorType())
+                    {
+                        case MirrorType.Normal:
+                            direction = Vector2.Reflect(direction, collision.contacts[0].normal);
+                            lineRenderer.positionCount += 1;
+                            currentVertexPosition += 1;
+                            lineRenderer.SetPosition(currentVertexPosition + 1, collision.contacts[0].point);
+                            moveLaser = true;
+                            break;
+                        case MirrorType.Splitter:
+                            Transform[] newLaserPosition = mirror.GetNewLaserLocation(collision.transform.position);
+                            for (int i = 0; i < newLaserPosition.Length; i++)
+                            {
+                                LaserController controller = Instantiate(laser, newLaserPosition[i].position, Quaternion.identity).GetComponent<LaserController>();
+                                controller.SetLaserStart(newLaserPosition[i].position);
+                                controller.SetLaserDirection(newLaserPosition[i].transform.right);
+                                controller.StartMovingLaser();
+                            }
+                            break;
+                        case MirrorType.Both:
+                            break;
+                    }
+
+
+
+                }
+
+
+            }
+            else
+            {
+                SoundManager.Instance.PlaySoundEffect(Sound.LASER_Wall);
+                StartCoroutine(LevelLost());
+            }
         }
 
 

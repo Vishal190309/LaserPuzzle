@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using UnityEditor.SceneManagement;
 using UnityEngine;
 
 public class PlacementSystem : MonoBehaviour
@@ -22,23 +21,18 @@ public class PlacementSystem : MonoBehaviour
     private bool placeObjectPreview;
     [SerializeField]
     private ObjectsDataSO data;
-    [SerializeField]
-    private InputManager inputManager;
 
     private int currentObjectId = -1;
     private PlacableObject currentSelectedObject;
 
     private List<Vector3> gridLocations = new List<Vector3>();
-    private List<Transform> placeObjectsLocations = new List<Transform>();
+
+    public List<Transform> placeObjectsLocations = new List<Transform>();
 
     private void Start()
     {
-        GameObject[] listOfAllies = GameObject.FindGameObjectsWithTag("Allies");
-        foreach (GameObject go in listOfAllies)
-        {
-            placeObjectsLocations.Add(go.transform);
-        }
-        inputManager.OnRightClick += RemoveObject;
+       
+        InputManager.Instance.OnRightClick += RemoveObject;
         for(int i = -3; i<3; i++)
         {
             for (int j = -4; j<4; j++)
@@ -79,8 +73,8 @@ public class PlacementSystem : MonoBehaviour
             currentSelectedObject = Instantiate(data.placementObjects[data.placementObjects.FindIndex(data => data.ID == id)].placementObject);
             currentSelectedObject.transform.position = mouseIndicator.transform.position;
             currentSelectedObject.SetTransperentMaterial(true);
-            inputManager.OnClicked += PlaceObject;
-            inputManager.OnRotate += RotateObject;
+            InputManager.Instance.OnClicked += PlaceObject;
+            InputManager.Instance.OnRotate += RotateObject;
         }
     }
 
@@ -88,8 +82,8 @@ public class PlacementSystem : MonoBehaviour
     {
        if(currentSelectedObject != null)
         {
-            inputManager.OnClicked -= PlaceObject;
-            inputManager.OnRotate -= RotateObject;
+            InputManager.Instance.OnClicked -= PlaceObject;
+            InputManager.Instance.OnRotate -= RotateObject;
             Destroy(currentSelectedObject.gameObject);
             currentSelectedObject = null;
             currentObjectId = -1;
@@ -99,7 +93,7 @@ public class PlacementSystem : MonoBehaviour
 
     public void PlaceObject()
     {
-        if (inputManager.IsMouseOverGameObject())
+        if (InputManager.Instance.IsMouseOverGameObject())
             return;
 
         if (currentSelectedObject != null)
@@ -112,8 +106,8 @@ public class PlacementSystem : MonoBehaviour
                 NoOfPlacableObjectsAvailable[currentObjectId] = currentObjectCount;
                 LevelManager.Instance.OnObjectCountUpdated?.Invoke(currentObjectId);
                 SoundManager.Instance.PlaySoundEffect(Sound.BUTTON_CLICK);
-                inputManager.OnClicked -= PlaceObject;
-                inputManager.OnRotate -= RotateObject;
+                InputManager.Instance.OnClicked -= PlaceObject;
+                InputManager.Instance.OnRotate -= RotateObject;
                 placeObjectsLocations.Add(currentSelectedObject.transform);
                 currentSelectedObject.SetTransperentMaterial(false);
                 currentSelectedObject = null;

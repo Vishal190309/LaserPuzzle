@@ -10,15 +10,13 @@ public class LevelController : MonoBehaviour
     [SerializeField] 
     private GameObject pauseUI;
     [SerializeField] 
-    private InputManager inputManager;
-    [SerializeField]
     private int TotalOfLaserEndPoints;
     private int currentLaserEndPoints;
 
 
     private void Start()
     {
-        inputManager.OnPause += OnPause;
+        InputManager.Instance.OnPause += OnPause;
     }
     public void increaseNoOfLaserEndPoints()
     {

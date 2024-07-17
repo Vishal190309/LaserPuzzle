@@ -7,9 +7,24 @@ using UnityEngine.EventSystems;
 public class InputManager : MonoBehaviour
 {
     // Start is called before the first frame update
-
+    private static InputManager instance;
+    public static InputManager Instance { get { return instance; } }
     public Action OnClicked,OnRightClick, OnExit,OnPause;
     public Action<bool> OnRotate;
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
     // Update is called once per frame
     void Update()
     {

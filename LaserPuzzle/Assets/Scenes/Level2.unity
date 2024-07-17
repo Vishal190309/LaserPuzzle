@@ -214,10 +214,10 @@ RectTransform:
   m_Children: []
   m_Father: {fileID: 781927011}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: 472.8}
-  m_SizeDelta: {x: 152.28, y: 81.46}
+  m_AnchorMin: {x: 0.5, y: 1}
+  m_AnchorMax: {x: 0.5, y: 1}
+  m_AnchoredPosition: {x: 0, y: -67.20001}
+  m_SizeDelta: {x: 152.28, y: 81.46002}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &446915827
 MonoBehaviour:
@@ -794,6 +794,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: a645f76116c7a8e4aa55cf52db5031af, type: 3}
+--- !u!4 &943431514 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3387691419413470119, guid: a645f76116c7a8e4aa55cf52db5031af, type: 3}
+  m_PrefabInstance: {fileID: 943431513}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1137551701
 GameObject:
   m_ObjectHideFlags: 0
@@ -2030,6 +2035,18 @@ PrefabInstance:
       propertyPath: mouseIndicator
       value: 
       objectReference: {fileID: 1414456816}
+    - target: {fileID: 1257204443816461112, guid: cd828b16f0c12624392b398d5e825455, type: 3}
+      propertyPath: placeObjectsLocations.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1257204443816461112, guid: cd828b16f0c12624392b398d5e825455, type: 3}
+      propertyPath: placeObjectsLocations.Array.data[0]
+      value: 
+      objectReference: {fileID: 943431514}
+    - target: {fileID: 1257204443816461112, guid: cd828b16f0c12624392b398d5e825455, type: 3}
+      propertyPath: placeObjectsLocations.Array.data[1]
+      value: 
+      objectReference: {fileID: 943431514}
     - target: {fileID: 1257204443816461112, guid: cd828b16f0c12624392b398d5e825455, type: 3}
       propertyPath: NoOfPlacableObjectsAvailable.Array.size
       value: 1
